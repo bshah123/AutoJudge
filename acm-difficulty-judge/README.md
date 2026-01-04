@@ -128,10 +128,9 @@ No setup needed—just visit the link and start analyzing problems!
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/bshah123/AutoJudge.git>
    cd acm-difficulty-judge
    ```
-
 2. **Install dependencies**
    ```bash
    pip install -r requirements.txt
@@ -284,18 +283,14 @@ The web interface features:
 - [ ] Support for different problem types (HackerRank, Codeforces, etc.)
 
 ## 👨‍💻 Author
-
-Created for ACM Problem Difficulty Prediction Challenge
-
-## 📄 License
-
-[Specify your license - MIT, Apache 2.0, etc.]
-
+~ Bhavya Shah 
+Created for ACM Open Project (AutoJudge) 
 ## 🙏 Acknowledgments
 
 - **Dataset**: TaskComplexityEval-24 by AREEG94FAHAD
-- **Libraries**: scikit-learn, LightGBM, sentence-transformers communities
+- **Libraries**: scikit-learn, LightGBM, sentence-transformers communities,Numpy,Panda,etc
 
 ---
 
 **Happy Problem Solving! 🚀**
+
