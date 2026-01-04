@@ -6,50 +6,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACM Difficulty Classifier</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00d2ff;
-            --neon-purple: #9d50bb;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --terminal-green: #00ff41;
+            --terminal-cyan: #00ffff;
+            --terminal-yellow: #ffff00;
+            --terminal-red: #ff4b2b;
+            --terminal-orange: #ff8c00;
+            --dark-bg: #000000;
+            --darker-bg: #0a0a0a;
+            --code-bg: #0d0d0d;
+            --border-dim: rgba(0, 255, 65, 0.15);
+            --border-bright: rgba(0, 255, 65, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: #0d1117;
+            background: var(--dark-bg);
             background-image:
-                radial-gradient(at 0% 0%, rgba(157, 80, 187, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.15) 0px, transparent 50%);
-            color: #e6edf3;
-            font-family: 'Inter', -apple-system, sans-serif;
+                linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                    rgba(0, 0, 0, 0.15),
+                    rgba(0, 0, 0, 0.15) 1px,
+                    transparent 1px,
+                    transparent 2px);
+            pointer-events: none;
+            z-index: 1000;
+            animation: scanlines 8s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(10px);
+            }
+        }
+
+        body::after {
+            content: '01010101 01100011 01110000 01110000';
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            font-size: 14px;
+            color: rgba(0, 255, 65, 0.05);
+            word-wrap: break-word;
+            line-height: 1.5;
+            animation: codeRain 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        @keyframes codeRain {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(50%);
+            }
         }
 
         .main-card {
             width: 100%;
             max-width: 900px;
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 2px solid var(--border-bright);
+            border-radius: 8px;
             padding: 40px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow:
+                0 0 40px rgba(0, 255, 65, 0.2),
+                inset 0 0 20px rgba(0, 255, 65, 0.03);
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-card::before,
+        .main-card::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--terminal-green);
+        }
+
+        .main-card::before {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .main-card::after {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
+            position: relative;
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 25px;
+        }
+
+        .header-ascii {
+            font-size: 0.7rem;
+            color: var(--terminal-green);
+            line-height: 1.2;
+            margin-bottom: 15px;
+            opacity: 0.6;
+            letter-spacing: 1px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow:
+                0 0 10px rgba(0, 255, 65, 0.8),
+                2px 2px 0 rgba(0, 255, 65, 0.3);
+        }
+
+        .header p {
+            color: rgba(0, 255, 65, 0.6);
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--border-bright);
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--terminal-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 12px;
+        }
+
+        .badge::before {
+            content: '> ';
+            color: var(--terminal-cyan);
         }
 
         .input-grid {
@@ -62,191 +204,562 @@
         .field-group {
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: var(--neon-blue);
+            color: var(--terminal-cyan);
             margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label::before {
+            content: '$';
+            color: var(--terminal-green);
+            font-weight: 700;
+        }
+
+        label i {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         textarea {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: white;
-            padding: 15px;
-            font-family: 'Fira Code', monospace;
+            background: var(--code-bg);
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            color: var(--terminal-green);
+            padding: 14px;
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
             resize: vertical;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+        }
+
+        textarea::placeholder {
+            color: rgba(0, 255, 65, 0.3);
+        }
+
+        textarea:hover {
+            border-color: var(--border-bright);
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.1);
         }
 
         textarea:focus {
             outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+            border-color: var(--terminal-green);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
         }
 
         .btn-predict {
             width: 100%;
             padding: 18px;
-            border-radius: 12px;
-            border: none;
-            background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
+            border-radius: 4px;
+            border: 2px solid var(--terminal-green);
+            background: rgba(0, 255, 65, 0.05);
+            color: var(--terminal-green);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
+            font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.2s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-predict::before {
+            content: '> EXECUTE:';
+            position: absolute;
+            left: 20px;
+            color: var(--terminal-cyan);
+            font-size: 0.8rem;
         }
 
         .btn-predict:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(37, 117, 252, 0.3);
+            background: rgba(0, 255, 65, 0.15);
+            box-shadow:
+                0 0 20px rgba(0, 255, 65, 0.3),
+                inset 0 0 20px rgba(0, 255, 65, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
         }
 
         .result-panel {
-            margin-top: 40px;
+            margin-top: 35px;
             display: none;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            animation: fadeIn 0.5s ease;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-dim);
         }
 
         .res-box {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--code-bg);
             padding: 25px;
-            border-radius: 16px;
+            border-radius: 4px;
             text-align: center;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-dim);
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .res-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--terminal-green);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .res-box:hover {
+            border-color: var(--border-bright);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+        }
+
+        .res-box:hover::before {
+            transform: scaleX(1);
         }
 
         .res-box h3 {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #8b949e;
+            margin: 0 0 15px 0;
+            font-size: 0.7rem;
+            color: var(--terminal-cyan);
             text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .res-box h3::before {
+            content: '[';
+            color: var(--terminal-green);
+        }
+
+        .res-box h3::after {
+            content: ']';
+            color: var(--terminal-green);
+        }
+
+        .res-box h3 i {
+            font-size: 0.9rem;
         }
 
         .res-val {
             font-size: 2.5rem;
-            font-weight: 800;
-            margin-top: 10px;
+            font-weight: 700;
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px currentColor;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
+        .trophy-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .platform-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-top: 20px;
+            padding: 15px;
+            flex-wrap: wrap;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .platform-logos:hover {
+            opacity: 1;
+        }
+
+        .platform-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .platform-logo:hover {
+            transform: translateY(-3px);
+        }
+
+        .platform-logo::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 1px;
+            background: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .platform-logo:hover::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .platform-icon {
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 5px currentColor);
+        }
+
+        .platform-name {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: inherit;
+        }
+
+        .codeforces {
+            color: #1f8dd6;
+        }
+
+        .atcoder {
+            color: #00a0dc;
+        }
+
+        .codechef {
+            color: #5b4638;
+        }
+
+        .leetcode {
+            color: #ffa116;
+        }
+
+        .kattis {
+            color: #00a0dc;
+        }
+
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid var(--border-bright);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            font-size: 1.2rem;
+            color: var(--terminal-green);
+        }
+
+        .audio-control:hover {
+            background: rgba(0, 255, 65, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            transform: scale(1.1);
+        }
+
+        .audio-control.playing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            50% {
+                box-shadow: 0 0 20px rgba(0, 255, 65, 0.6);
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .main-card {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
             .result-panel {
                 grid-template-columns: 1fr;
+            }
+
+            .btn-predict::before {
+                display: none;
+            }
+
+            .platform-logos {
+                gap: 15px;
+            }
+
+            .platform-icon {
+                font-size: 1.5rem;
+            }
+
+            .platform-name {
+                font-size: 0.55rem;
+            }
+
+            .audio-control {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .main-card {
+                padding: 25px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .btn-predict {
+                padding: 15px;
+                font-size: 0.85rem;
+            }
+
+            .platform-logos {
+                gap: 12px;
+            }
+
+            .platform-icon {
+                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 
 <body>
+    <audio id="bgAudio" loop>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2894/2894-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <button class="audio-control" id="audioToggle" onclick="toggleAudio()">
+        <i class="fas fa-volume-mute"></i>
+    </button>
+
     <div class="main-card">
         <div class="header">
-            <h1><i class="fas fa-terminal"></i> AuToJudge Classifier</h1>
-            <p style="color: #8b949e;">Predict problem difficulty using ML-based analysis</p>
+            <div class="header-ascii">
+                █████╗ ██████╗███╗ ███╗<br>
+                ██╔══██╗██╔════╝████╗ ████║<br>
+                ███████║██║ ██╔████╔██║<br>
+                ██╔══██║██║ ██║╚██╔╝██║<br>
+                ██║ ██║╚██████╗██║ ╚═╝ ██║
+            </div>
+            <h1>AuToJudge</h1>
+            <p>// ML-Powered Difficulty Analysis System</p>
+            <span class="badge">STATUS: ONLINE</span>
+
+            <div class="platform-logos">
+                <div class="platform-logo codeforces" title="Codeforces">
+                    <div class="platform-icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M4.5 7.5C5.328 7.5 6 8.172 6 9v10.5c0 .828-.672 1.5-1.5 1.5h-3C.672 21 0 20.328 0 19.5V9c0-.828.672-1.5 1.5-1.5h3zm9-4.5c.828 0 1.5.672 1.5 1.5v15c0 .828-.672 1.5-1.5 1.5h-3c-.828 0-1.5-.672-1.5-1.5v-15c0-.828.672-1.5 1.5-1.5h3zm9 7.5c.828 0 1.5.672 1.5 1.5v7.5c0 .828-.672 1.5-1.5 1.5h-3c-.828 0-1.5-.672-1.5-1.5V12c0-.828.672-1.5 1.5-1.5h3z" />
+                        </svg>
+                    </div>
+                    <span class="platform-name">Codeforces</span>
+                </div>
+
+                <div class="platform-logo atcoder" title="AtCoder">
+                    <div class="platform-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <span class="platform-name">AtCoder</span>
+                </div>
+
+                <div class="platform-logo codechef" title="CodeChef">
+                    <div class="platform-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <span class="platform-name">CodeChef</span>
+                </div>
+
+                <div class="platform-logo leetcode" title="LeetCode">
+                    <div class="platform-icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.516-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.835 0 1.498.513 2.895 1.494 3.875l4.347 4.361c.981.979 2.337 1.452 3.834 1.452s2.853-.512 3.835-1.494l2.609-2.637c.514-.514.496-1.365-.039-1.9s-1.386-.553-1.899-.039zM20.811 13.01H10.666c-.702 0-1.27.604-1.27 1.346s.568 1.346 1.27 1.346h10.145c.701 0 1.27-.604 1.27-1.346s-.569-1.346-1.27-1.346z" />
+                        </svg>
+                    </div>
+                    <span class="platform-name">LeetCode</span>
+                </div>
+
+                <div class="platform-logo kattis" title="Open Kattis">
+                    <div class="platform-icon">
+                        <i class="fas fa-cat"></i>
+                    </div>
+                    <span class="platform-name">Kattis</span>
+                </div>
+            </div>
         </div>
 
         <div class="input-grid">
             <div class="field-group">
-                <label>Problem Description</label>
-                <textarea id="desc" rows="5" placeholder="Enter full problem statement..."></textarea>
+                <label>
+                    <i class="fas fa-file-code"></i>
+                    Problem Description
+                </label>
+                <textarea id="desc" rows="5" placeholder="// Enter problem statement..."></textarea>
             </div>
             <div class="field-group">
-                <label>Input Description & Constraints</label>
-                <textarea id="input_desc" rows="3" placeholder="e.g. N <= 10^5, Time limit 1s..."></textarea>
+                <label>
+                    <i class="fas fa-terminal"></i>
+                    Input & Constraints
+                </label>
+                <textarea id="input_desc" rows="3" placeholder="// N ≤ 10^5, Time: 1s, Memory: 256MB..."></textarea>
             </div>
             <div class="field-group">
-                <label>Output Description</label>
-                <textarea id="output_desc" rows="2" placeholder="Describe expected output format..."></textarea>
+                <label>
+                    <i class="fas fa-code"></i>
+                    Output Format
+                </label>
+                <textarea id="output_desc" rows="2" placeholder="// Expected output format..."></textarea>
             </div>
         </div>
 
         <button class="btn-predict" onclick="runPrediction()">
-            <i class="fas fa-bolt"></i> ANALYZE PROBLEM
+            <span>RUN ANALYSIS</span>
         </button>
 
         <div id="results" class="result-panel">
             <div class="res-box">
-                <h3>Classification</h3>
+                <h3><i class="fas fa-layer-group"></i> CLASSIFICATION</h3>
                 <div id="class_out" class="res-val">---</div>
             </div>
             <div class="res-box">
-                <h3>Difficulty Score</h3>
-                <div id="score_out" class="res-val" style="color: var(--neon-blue);">0.0</div>
+                <h3><i class="fas fa-tachometer-alt"></i> SCORE</h3>
+                <div id="score_out" class="res-val" style="color: var(--terminal-cyan);">0.0</div>
             </div>
         </div>
     </div>
 
     <script>
-          async function runPrediction() {
-    const btn = document.querySelector('.btn-predict');
-    const desc = document.getElementById('desc').value;
-    const input_desc = document.getElementById('input_desc').value;
-    const output_desc = document.getElementById('output_desc').value;
+        let audioPlaying = false;
+        const audio = document.getElementById('bgAudio');
+        const audioToggle = document.getElementById('audioToggle');
 
-    if (!desc) {
-        alert("Please enter a problem description.");
-        return;
-    }
-
-    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> COMPUTING...';
-    
-    try {
-        const response = await fetch('/predict', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                description: desc,
-                input_description: input_desc,
-                output_description: output_desc
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            document.getElementById('results').style.display = 'grid';
-            
-            // THESE KEYS MUST MATCH PYTHON'S jsonify()
-            document.getElementById('class_out').innerText = data.difficulty_class;
-            document.getElementById('score_out').innerText = data.difficulty_score;
-
-            // Update color based on result
-            const classEl = document.getElementById('class_out');
-            if (data.difficulty_class === 'Easy') classEl.style.color = '#00ff88';
-            else if (data.difficulty_class === 'Hard') classEl.style.color = '#ff4b2b';
-            else classEl.style.color = '#ffcc00';
-        } else {
-            alert("Server Error: " + (data.error || "Unknown error"));
+        function toggleAudio() {
+            if (audioPlaying) {
+                audio.pause();
+                audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                audioToggle.classList.remove('playing');
+            } else {
+                audio.play();
+                audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                audioToggle.classList.add('playing');
+            }
+            audioPlaying = !audioPlaying;
         }
-    } catch (err) {
-        alert("Connection failed. Check Hugging Face logs.");
-    } finally {
-        btn.innerHTML = '<i class="fas fa-bolt"></i> ANALYZE PROBLEM';
-    }
-}
+
+        document.addEventListener('click', function initAudio() {
+            if (!audioPlaying) {
+                audio.play().then(() => {
+                    audioPlaying = true;
+                    audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    audioToggle.classList.add('playing');
+                }).catch(() => {
+                    // Auto-play blocked, user will need to click the button
+                });
+                document.removeEventListener('click', initAudio);
+            }
+        }, { once: true });
+
+        async function runPrediction() {
+            const btn = document.querySelector('.btn-predict');
+            const desc = document.getElementById('desc').value;
+            const input_desc = document.getElementById('input_desc').value;
+            const output_desc = document.getElementById('output_desc').value;
+
+            if (!desc) {
+                alert("⚠️ Please enter a problem description.");
+                return;
+            }
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> <span>COMPUTING...</span>';
+            btn.style.pointerEvents = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        description: desc,
+                        input_description: input_desc,
+                        output_description: output_desc
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('results').style.display = 'grid';
+
+                    document.getElementById('class_out').innerText = data.difficulty_class;
+                    document.getElementById('score_out').innerText = data.difficulty_score;
+
+                    const classEl = document.getElementById('class_out');
+                    if (data.difficulty_class === 'Easy') {
+                        classEl.style.color = 'var(--terminal-green)';
+                        classEl.innerHTML = '<i class="fas fa-check-circle trophy-icon" style="color: var(--terminal-green);"></i>' + data.difficulty_class;
+                    } else if (data.difficulty_class === 'Hard') {
+                        classEl.style.color = 'var(--terminal-red)';
+                        classEl.innerHTML = '<i class="fas fa-fire trophy-icon" style="color: var(--terminal-red);"></i>' + data.difficulty_class;
+                    } else {
+                        classEl.style.color = 'var(--terminal-yellow)';
+                        classEl.innerHTML = '<i class="fas fa-star trophy-icon" style="color: var(--terminal-yellow);"></i>' + data.difficulty_class;
+                    }
+                } else {
+                    alert("❌ Server Error: " + (data.error || "Unknown error"));
+                }
+            } catch (err) {
+                alert("⚠️ Connection failed. Check Hugging Face logs.");
+            } finally {
+                btn.innerHTML = '<span>RUN ANALYSIS</span>';
+                btn.style.pointerEvents = 'auto';
+            }
+        }
     </script>
 </body>
 
